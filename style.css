@@ -1,12 +1,12 @@
 :root{
-  --primary: #ffd9d9;
-  --bg-color: rgb(226, 175, 175);
+  --primary: #fcf3f3;
+  --bg-color: rgb(255, 255, 255);
   --bg-envelope-color: #eb2424;
-  --envelope-tab: #d14048;
-  --envelope-cover: #e4270e;
+  --envelope-tab: #caff0c;
+  --envelope-cover: #f0da1a;
   --shadow-color: rgba(255, 255, 255, 0.2);
   --txt-color: #444;
-  --heart-color: rgb(252, 118, 8);
+  --heart-color: rgb(252, 8, 8);
 }
 body{
   margin: 0;
@@ -70,7 +70,7 @@ body{
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   color: var(--txt-color);
   text-align: left;
-  font-size: 30px;
+  font-size: 20px;
 }
 .heart {
   position: absolute;
