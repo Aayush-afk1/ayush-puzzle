@@ -1,34 +1,159 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Envelope for aakriti</title>
-    <link rel="stylesheet" href="./style.css">
+  <meta charset="UTF-8" />
+  <title>Heart Brick Game</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: linear-gradient(to right, #ffdde1, #ee9ca7);
+    }
+    canvas {
+      display: block;
+    }
+  </style>
 </head>
 <body>
-    <div class="container"> <div class="text">
-                        <strong>TAP ON HEART</strong>
-        <div class="envelope-wrapper">
-        
-            <div class="envelope">
-                
-                <div class="letter">
-                    
-                    <div class="text">
-                        <strong>suta chup lagera goodnight take care</strong>
-                    </div>
-                </div>
-            </div>
-            <div class="heart"></div>
-        </div>
-    </div>
-    <script>
-        const envelope = document.querySelector('.envelope-wrapper');
-        envelope.addEventListener('click', () => {
-            envelope.classList.toggle('flap');
-        });
-    </script>
+<canvas id="gameCanvas"></canvas>
+<script>
+  const canvas = document.getElementById("gameCanvas");
+  const ctx = canvas.getContext("2d");
+
+  let width = window.innerWidth;
+  let height = window.innerHeight;
+  canvas.width = width;
+  canvas.height = height;
+
+  const paddleHeight = 15;
+  const paddleWidth = 100;
+  let paddleX = (canvas.width - paddleWidth) / 2;
+
+  let rightPressed = false;
+  let leftPressed = false;
+
+  const brickRowCount = 4;
+  const brickColumnCount = 6;
+  const brickSize = 40;
+  const brickPadding = 20;
+  const brickOffsetTop = 50;
+  const brickOffsetLeft = 30;
+
+  const ballRadius = 20;
+  let x = canvas.width / 2;
+  let y = canvas.height - 60;
+  let dx = 4;
+  let dy = -4;
+
+  const bricks = [];
+  for (let c = 0; c < brickColumnCount; c++) {
+    bricks[c] = [];
+    for (let r = 0; r < brickRowCount; r++) {
+      bricks[c][r] = { x: 0, y: 0, status: 1 };
+    }
+  }
+
+  document.addEventListener("keydown", keyDownHandler);
+  document.addEventListener("keyup", keyUpHandler);
+  document.addEventListener("touchmove", touchMoveHandler, { passive: false });
+
+  function keyDownHandler(e) {
+    if (e.key === "Right" || e.key === "ArrowRight") rightPressed = true;
+    else if (e.key === "Left" || e.key === "ArrowLeft") leftPressed = true;
+  }
+
+  function keyUpHandler(e) {
+    if (e.key === "Right" || e.key === "ArrowRight") rightPressed = false;
+    else if (e.key === "Left" || e.key === "ArrowLeft") leftPressed = false;
+  }
+
+  function touchMoveHandler(e) {
+    const touchX = e.touches[0].clientX;
+    paddleX = touchX - paddleWidth / 2;
+    e.preventDefault();
+  }
+
+  function drawHeart(x, y, size, color) {
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.bezierCurveTo(x, y - size / 2, x - size, y - size / 2, x - size, y);
+    ctx.bezierCurveTo(x - size, y + size, x, y + size * 1.5, x, y + size * 2);
+    ctx.bezierCurveTo(x, y + size * 1.5, x + size, y + size, x + size, y);
+    ctx.bezierCurveTo(x + size, y - size / 2, x, y - size / 2, x, y);
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.closePath();
+  }
+
+  function drawBall() {
+    drawHeart(x, y, ballRadius / 2, "#ff4e75");
+  }
+
+  function drawPaddle() {
+    ctx.beginPath();
+    ctx.rect(paddleX, canvas.height - paddleHeight - 10, paddleWidth, paddleHeight);
+    ctx.fillStyle = "#ff4081";
+    ctx.fill();
+    ctx.closePath();
+  }
+
+  function drawBricks() {
+    for (let c = 0; c < brickColumnCount; c++) {
+      for (let r = 0; r < brickRowCount; r++) {
+        if (bricks[c][r].status === 1) {
+          const brickX = c * (brickSize + brickPadding) + brickOffsetLeft;
+          const brickY = r * (brickSize + brickPadding) + brickOffsetTop;
+          bricks[c][r].x = brickX;
+          bricks[c][r].y = brickY;
+          drawHeart(brickX + brickSize / 2, brickY, brickSize / 2.5, "#ff6f91");
+        }
+      }
+    }
+  }
+
+  function collisionDetection() {
+    for (let c = 0; c < brickColumnCount; c++) {
+      for (let r = 0; r < brickRowCount; r++) {
+        const b = bricks[c][r];
+        if (b.status === 1) {
+          if (
+            x > b.x &&
+            x < b.x + brickSize &&
+            y > b.y &&
+            y < b.y + brickSize
+          ) {
+            dy = -dy;
+            b.status = 0;
+          }
+        }
+      }
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawBricks();
+    drawBall();
+    drawPaddle();
+    collisionDetection();
+
+    if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) dx = -dx;
+    if (y + dy < ballRadius) dy = -dy;
+    else if (y + dy > canvas.height - ballRadius - paddleHeight - 10) {
+      if (x > paddleX && x < paddleX + paddleWidth) dy = -dy;
+      else document.location.reload();
+    }
+
+    x += dx;
+    y += dy;
+
+    if (rightPressed && paddleX < canvas.width - paddleWidth) paddleX += 7;
+    else if (leftPressed && paddleX > 0) paddleX -= 7;
+
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+</script>
 </body>
 </html>
