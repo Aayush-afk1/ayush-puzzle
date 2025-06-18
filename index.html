@@ -1,5 +1,3 @@
-<!-- 🔥 Full code with fireworks below -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -38,8 +36,8 @@
     }
 
     #puzzle-container {
-      width: 600px;
-      height: 600px;
+      width: 560px;
+      height: 720px; /* increased for taller tiles */
       margin: 30px auto;
       display: flex;
       flex-wrap: wrap;
@@ -49,11 +47,11 @@
     }
 
     .tile {
-      width: 75px;
-      height: 75px;
+      width: 70px; /* narrower horizontally */
+      height: 90px; /* taller vertically */
       box-sizing: border-box;
       border: 0.5px solid #fff;
-      background-size: 600px 600px;
+      background-size: 560px 720px;
       cursor: grab;
     }
 
@@ -149,8 +147,10 @@
 
     let tiles = [];
     const gridSize = 8;
-    const containerSize = 600;
-    const tileSize = containerSize / gridSize;
+    const containerW = 560;
+    const containerH = 720;
+    const tileW = containerW / gridSize;
+    const tileH = containerH / gridSize;
 
     let timer = 0;
     let interval;
@@ -178,11 +178,12 @@
         tile.setAttribute("data-current", index);
 
         const pos = tile.getAttribute("data-correct");
-        const x = (pos % gridSize) * -tileSize;
-        const y = Math.floor(pos / gridSize) * -tileSize;
-        tile.style.width = tile.style.height = `${tileSize}px`;
+        const x = (pos % gridSize) * -tileW;
+        const y = Math.floor(pos / gridSize) * -tileH;
+        tile.style.width = `${tileW}px`;
+        tile.style.height = `${tileH}px`;
         tile.style.backgroundImage = `url(${imageSrc})`;
-        tile.style.backgroundSize = `${containerSize}px ${containerSize}px`;
+        tile.style.backgroundSize = `${containerW}px ${containerH}px`;
         tile.style.backgroundPosition = `${x}px ${y}px`;
 
         puzzle.appendChild(tile);
