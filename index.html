@@ -11,19 +11,16 @@
       padding: 20px;
       overflow-x: hidden;
     }
-
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 10px;
     }
-
     h1 {
       color: #ff4081;
       font-size: 2em;
     }
-
     #preview {
       width: 150px;
       height: 150px;
@@ -34,10 +31,9 @@
       background-position: center;
       border-radius: 5px;
     }
-
     #puzzle-container {
       width: 560px;
-      height: 720px; /* increased for taller tiles */
+      height: 720px;
       margin: 30px auto;
       display: flex;
       flex-wrap: wrap;
@@ -45,34 +41,23 @@
       box-shadow: 0 0 20px #ccc;
       position: relative;
     }
-
     .tile {
-      width: 70px; /* narrower horizontally */
-      height: 90px; /* taller vertically */
+      width: 70px;
+      height: 90px;
       box-sizing: border-box;
       border: 0.5px solid #fff;
       background-size: 560px 720px;
       cursor: grab;
     }
-
-    #message {
-      text-align: center;
-      font-size: 1.5em;
-      color: green;
-      margin-top: 15px;
-    }
-
-    #timer {
+    #message, #timer {
       text-align: center;
       font-size: 1.2em;
       color: #333;
-      margin-bottom: 10px;
+      margin-top: 10px;
     }
-
     #controls {
       text-align: center;
     }
-
     button {
       font-size: 1em;
       padding: 10px 20px;
@@ -82,11 +67,9 @@
       border-radius: 20px;
       cursor: pointer;
     }
-
     button:hover {
       background-color: #ff4e75;
     }
-
     .celebration {
       position: fixed;
       top: 0;
@@ -101,12 +84,10 @@
       align-items: center;
       animation: fadeOut 3s forwards;
     }
-
     @keyframes fadeOut {
       0% { opacity: 1; }
       100% { opacity: 0; }
     }
-
     canvas#fireworkCanvas {
       position: fixed;
       top: 0;
@@ -123,14 +104,9 @@
     <h1>🧠 Mega Puzzle Game (8x8)</h1>
     <div id="preview"></div>
   </header>
-
   <div id="timer">⏱️ Time: 0s</div>
   <div id="puzzle-container"></div>
-
-  <div id="controls">
-    <button onclick="createPuzzle()">🔁 Restart Puzzle</button>
-  </div>
-
+  <div id="controls"><button onclick="createPuzzle()">🔁 Restart Puzzle</button></div>
   <div id="message"></div>
   <div id="celebration" class="celebration" style="display: none;">🎆💖🎇</div>
   <canvas id="fireworkCanvas"></canvas>
@@ -176,7 +152,6 @@
 
       tiles.forEach((tile, index) => {
         tile.setAttribute("data-current", index);
-
         const pos = tile.getAttribute("data-correct");
         const x = (pos % gridSize) * -tileW;
         const y = Math.floor(pos / gridSize) * -tileH;
@@ -185,7 +160,6 @@
         tile.style.backgroundImage = `url(${imageSrc})`;
         tile.style.backgroundSize = `${containerW}px ${containerH}px`;
         tile.style.backgroundPosition = `${x}px ${y}px`;
-
         puzzle.appendChild(tile);
       });
 
@@ -202,47 +176,40 @@
     }
 
     function enableDragAndDrop() {
-      let dragged;
-
-      document.querySelectorAll(".tile").forEach(tile => {
+      const tiles = document.querySelectorAll(".tile");
+      tiles.forEach(tile => {
         tile.draggable = true;
 
         tile.addEventListener("dragstart", e => {
-          dragged = e.target;
+          e.dataTransfer.setData("text/plain", [...tiles].indexOf(tile));
         });
 
         tile.addEventListener("dragover", e => e.preventDefault());
 
         tile.addEventListener("drop", e => {
           e.preventDefault();
-          if (dragged !== e.target) {
-            swapTiles(dragged, e.target);
-            updateCorrectCount();
-            checkWin();
-          }
+          const fromIndex = e.dataTransfer.getData("text/plain");
+          const toIndex = [...tiles].indexOf(tile);
+          if (fromIndex !== toIndex) swapTiles(fromIndex, toIndex);
         });
       });
     }
 
-    function swapTiles(tile1, tile2) {
-      const tempCurrent = tile1.getAttribute("data-current");
-      tile1.setAttribute("data-current", tile2.getAttribute("data-current"));
-      tile2.setAttribute("data-current", tempCurrent);
-
-      const tempHTML = tile1.outerHTML;
-      tile1.outerHTML = tile2.outerHTML;
-      tile2.outerHTML = tempHTML;
-
+    function swapTiles(fromIndex, toIndex) {
+      const tileList = [...document.querySelectorAll(".tile")];
+      const temp = tileList[fromIndex].outerHTML;
+      tileList[fromIndex].outerHTML = tileList[toIndex].outerHTML;
+      tileList[toIndex].outerHTML = temp;
       enableDragAndDrop();
+      updateCorrectCount();
+      checkWin();
     }
 
     function updateCorrectCount() {
       const currentTiles = document.querySelectorAll(".tile");
       let correctCount = 0;
       for (let i = 0; i < currentTiles.length; i++) {
-        if (currentTiles[i].getAttribute("data-correct") == i) {
-          correctCount++;
-        }
+        if (currentTiles[i].getAttribute("data-correct") == i) correctCount++;
       }
       message.textContent = `✔️ ${correctCount} / 64 tiles correct`;
     }
@@ -252,7 +219,6 @@
       for (let i = 0; i < currentTiles.length; i++) {
         if (currentTiles[i].getAttribute("data-correct") != i) return;
       }
-
       clearInterval(interval);
       message.textContent = "🎉 Wow, very good!";
       puzzle.innerHTML = "";
@@ -268,7 +234,7 @@
       }, 1000);
     }
 
-    // 🎆 Firework Effect
+    // 🎆 Fireworks
     const canvas = document.getElementById("fireworkCanvas");
     const ctx = canvas.getContext("2d");
 
