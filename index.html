@@ -196,14 +196,21 @@
     }
 
     function swapTiles(fromIndex, toIndex) {
-      const tileList = [...document.querySelectorAll(".tile")];
-      const temp = tileList[fromIndex].outerHTML;
-      tileList[fromIndex].outerHTML = tileList[toIndex].outerHTML;
-      tileList[toIndex].outerHTML = temp;
-      enableDragAndDrop();
-      updateCorrectCount();
-      checkWin();
-    }
+  const tileList = [...document.querySelectorAll(".tile")];
+  const fromTile = tileList[fromIndex];
+  const toTile = tileList[toIndex];
+
+  const fromClone = fromTile.cloneNode(true);
+  const toClone = toTile.cloneNode(true);
+
+  // Swap tiles in the DOM
+  puzzle.replaceChild(fromClone, toTile);
+  puzzle.replaceChild(toClone, fromTile);
+
+  enableDragAndDrop();
+  updateCorrectCount();
+  checkWin();
+}
 
     function updateCorrectCount() {
       const currentTiles = document.querySelectorAll(".tile");
