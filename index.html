@@ -195,7 +195,7 @@
       });
     }
 
-    function swapTiles(fromIndex, toIndex) {
+  function swapTiles(fromIndex, toIndex) {
   const tileList = [...document.querySelectorAll(".tile")];
   const fromTile = tileList[fromIndex];
   const toTile = tileList[toIndex];
@@ -203,11 +203,13 @@
   const fromClone = fromTile.cloneNode(true);
   const toClone = toTile.cloneNode(true);
 
-  // Swap tiles in the DOM
+  // Attach drag events only to new clones
+  addDragEvents(fromClone);
+  addDragEvents(toClone);
+
   puzzle.replaceChild(fromClone, toTile);
   puzzle.replaceChild(toClone, fromTile);
 
-  enableDragAndDrop();
   updateCorrectCount();
   checkWin();
 }
