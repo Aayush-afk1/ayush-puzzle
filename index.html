@@ -118,7 +118,7 @@
     const timerEl = document.getElementById("timer");
     const celebration = document.getElementById("celebration");
 
-    const imageSrc = "aaku1.jpg";
+    const imageSrc = "aak4.jpg";
     preview.style.backgroundImage = `url(${imageSrc})`;
 
     let tiles = [];
@@ -175,44 +175,47 @@
       }
     }
 
-    function enableDragAndDrop() {
-      const tiles = document.querySelectorAll(".tile");
-      tiles.forEach(tile => {
-        tile.draggable = true;
+    function addDragEvents(tile) {
+      tile.draggable = true;
 
-        tile.addEventListener("dragstart", e => {
-          e.dataTransfer.setData("text/plain", [...tiles].indexOf(tile));
-        });
+      tile.addEventListener("dragstart", e => {
+        const allTiles = [...document.querySelectorAll(".tile")];
+        e.dataTransfer.setData("text/plain", allTiles.indexOf(tile));
+      });
 
-        tile.addEventListener("dragover", e => e.preventDefault());
+      tile.addEventListener("dragover", e => e.preventDefault());
 
-        tile.addEventListener("drop", e => {
-          e.preventDefault();
-          const fromIndex = e.dataTransfer.getData("text/plain");
-          const toIndex = [...tiles].indexOf(tile);
-          if (fromIndex !== toIndex) swapTiles(fromIndex, toIndex);
-        });
+      tile.addEventListener("drop", e => {
+        e.preventDefault();
+        const allTiles = [...document.querySelectorAll(".tile")];
+        const fromIndex = e.dataTransfer.getData("text/plain");
+        const toIndex = allTiles.indexOf(tile);
+        if (fromIndex !== toIndex) swapTiles(fromIndex, toIndex);
       });
     }
 
-  function swapTiles(fromIndex, toIndex) {
-  const tileList = [...document.querySelectorAll(".tile")];
-  const fromTile = tileList[fromIndex];
-  const toTile = tileList[toIndex];
+    function enableDragAndDrop() {
+      const tiles = document.querySelectorAll(".tile");
+      tiles.forEach(addDragEvents);
+    }
 
-  const fromClone = fromTile.cloneNode(true);
-  const toClone = toTile.cloneNode(true);
+    function swapTiles(fromIndex, toIndex) {
+      const tileList = [...document.querySelectorAll(".tile")];
+      const fromTile = tileList[fromIndex];
+      const toTile = tileList[toIndex];
 
-  // Attach drag events only to new clones
-  addDragEvents(fromClone);
-  addDragEvents(toClone);
+      const fromClone = fromTile.cloneNode(true);
+      const toClone = toTile.cloneNode(true);
 
-  puzzle.replaceChild(fromClone, toTile);
-  puzzle.replaceChild(toClone, fromTile);
+      addDragEvents(fromClone);
+      addDragEvents(toClone);
 
-  updateCorrectCount();
-  checkWin();
-}
+      puzzle.replaceChild(fromClone, toTile);
+      puzzle.replaceChild(toClone, fromTile);
+
+      updateCorrectCount();
+      checkWin();
+    }
 
     function updateCorrectCount() {
       const currentTiles = document.querySelectorAll(".tile");
