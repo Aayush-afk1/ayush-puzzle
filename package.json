@@ -1,6 +1,9 @@
 {
-  "name": "aakriti-app",
+  "name": "aakriti",
   "version": "1.0.0",
+  "description": "Aakriti is a modern PWA example built with React and Vite.",
+  "author": "Aayush",
+  "private": true,
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -13,6 +16,6 @@
   "devDependencies": {
     "@vitejs/plugin-react": "^4.0.0",
     "vite": "^5.0.0",
-    "vite-plugin-pwa": "^0.16.3"
+    "vite-plugin-pwa": "^0.16.4"
   }
 }
